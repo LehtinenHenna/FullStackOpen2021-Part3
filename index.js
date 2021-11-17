@@ -28,7 +28,27 @@ let persons = [
 ]
 /*~~~~~~~~~~~~~~~~~~*/
 app.use(express.json())
-app.use(morgan('tiny'))
+// morgan middleware logs request data in the console
+app.use(morgan((tokens,req, res) => {
+  let tokensList = [
+    tokens.method(req, res),
+    tokens.url(req, res),
+    tokens.status(req, res),
+    tokens.res(req, res, 'content-length'), '-',
+    tokens['response-time'](req, res), 'ms',
+    ]
+  
+  let body = req.body
+  body = JSON.stringify(body)
+  
+  if (body !== '{}') {
+    // creating a new token that can be called with tokens.body(req, res)
+    morgan.token('body', () => body)
+    tokensList.push(tokens.body(req, res))
+  }
+
+  return tokensList.join(' ')
+}))
 /*~~~~~~~~~~~~~~~~~~*/
 
 // api to get the info page
@@ -71,6 +91,7 @@ const generateId = () => {
   let id = null 
   do {
     id = Math.floor( Math.random() * 100 )// generates random integer between 0 and 100
+    console.log('id:', id)
   }
   while (persons.find(person => person.id === id)) // generate new id if it's already taken
 
