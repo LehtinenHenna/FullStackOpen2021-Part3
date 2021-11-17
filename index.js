@@ -1,4 +1,5 @@
 const express = require('express')
+const morgan = require('morgan')
 const app = express()
 
 /*~~~~~~~~~~~~~~~~~~*/
@@ -27,6 +28,8 @@ let persons = [
 ]
 /*~~~~~~~~~~~~~~~~~~*/
 app.use(express.json())
+app.use(morgan('tiny'))
+/*~~~~~~~~~~~~~~~~~~*/
 
 // api to get the info page
 app.get('/info', (request, response) => {
@@ -68,7 +71,6 @@ const generateId = () => {
   let id = null 
   do {
     id = Math.floor( Math.random() * 100 )// generates random integer between 0 and 100
-    console.log(id)
   }
   while (persons.find(person => person.id === id)) // generate new id if it's already taken
 
@@ -78,7 +80,6 @@ const generateId = () => {
 // api to post a person
 app.post('/api/persons', (request, response) => {
   const body = request.body
-  console.log(body)
 
   const newPerson = {
     id: generateId(),
