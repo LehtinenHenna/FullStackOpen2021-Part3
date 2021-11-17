@@ -1,0 +1,7 @@
+POST http://localhost:3001/api/persons
+Content-Type: application/json
+
+{
+  "name": "Godfrey Harold Hardy",
+  "number": "045-5567898"
+}

@@ -26,6 +26,7 @@ let persons = [
   }
 ]
 /*~~~~~~~~~~~~~~~~~~*/
+app.use(express.json())
 
 // api to get the info page
 app.get('/info', (request, response) => {
@@ -54,11 +55,45 @@ app.get('/api/persons/:id', (request, response) => {
   }
 })
 
+// api to delete a person
 app.delete('/api/persons/:id', (request, response) => {
   const id = Number(request.params.id)
   persons = persons.filter(person => person.id !== id)
 
   response.status(204).end()
+})
+
+// function to generate a unique id
+const generateId = () => {
+  let id = null 
+  do {
+    id = Math.floor( Math.random() * 100 )// generates random integer between 0 and 100
+    console.log(id)
+  }
+  while (persons.find(person => person.id === id)) // generate new id if it's already taken
+
+  return id
+}
+
+// api to post a person
+app.post('/api/persons', (request, response) => {
+  const body = request.body
+  console.log(body)
+  // require both name and number
+  if (!body.name || !body.number) {
+    return response.status(400).json({
+      error: 'content missing'
+    })
+  }
+  const person = {
+    id: generateId(),
+    name: body.name,
+    number: body.number,
+  }
+
+  persons = persons.concat(person)
+
+  response.json(person)
 })
 
 /*~~~~~~~~~~~~~~~~~~*/
