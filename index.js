@@ -79,21 +79,28 @@ const generateId = () => {
 app.post('/api/persons', (request, response) => {
   const body = request.body
   console.log(body)
-  // require both name and number
-  if (!body.name || !body.number) {
-    return response.status(400).json({
-      error: 'content missing'
-    })
-  }
-  const person = {
+
+  const newPerson = {
     id: generateId(),
     name: body.name,
     number: body.number,
   }
 
-  persons = persons.concat(person)
+  // require both name and number
+  if (!body.name || !body.number) {
+    return response.status(400).json({
+      error: 'content missing'
+    })
+  // if name is already in the phone book request is denied
+  } else if (persons.find(person => person.name === newPerson.name)) {
+    return response.status(400).json({
+      error: 'name already exists'
+    })
+  }
 
-  response.json(person)
+  persons = persons.concat(newPerson)
+
+  response.json(newPerson)
 })
 
 /*~~~~~~~~~~~~~~~~~~*/
