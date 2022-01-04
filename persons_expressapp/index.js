@@ -30,7 +30,8 @@ let persons = [
 /*~~~~~~~~~~~~~~~~~~*/
 
 app.use(express.json())
-app.use(cors())
+app.use(cors()) // middleware to allow reactapp to fetch data from backend
+app.use(express.static('build')) // middleware so that index.html from build is displayed at 
 
 // morgan middleware logs request data in the console
 app.use(morgan((tokens,req, res) => {

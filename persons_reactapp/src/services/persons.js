@@ -1,5 +1,7 @@
 import axios from 'axios'
-const baseUrl = 'http://localhost:3001/api/persons' // changed from http://localhost:3001/persons to match backend instead of db.json
+const baseUrl = '/api/persons' //used when production build is generated and moved to persons_expressapp to be used from there
+//const baseUrl = 'http://localhost:3001/api/persons' //pointing to backend persons_expressapp when reactapp and expressapp are separate
+//const baseUrl = 'http://localhost:3001/persons' //pointing to db.json
 
 const getAll = () => {
   const request = axios.get(baseUrl)
