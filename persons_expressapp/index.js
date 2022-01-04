@@ -1,6 +1,7 @@
 const express = require('express')
 const morgan = require('morgan')
 const app = express()
+const cors = require('cors')
 
 /*~~~~~~~~~~~~~~~~~~*/
 
@@ -28,6 +29,8 @@ let persons = [
 ]
 /*~~~~~~~~~~~~~~~~~~*/
 app.use(express.json())
+app.use(cors())
+
 // morgan middleware logs request data in the console
 app.use(morgan((tokens,req, res) => {
   let tokensList = [
@@ -129,3 +132,5 @@ app.post('/api/persons', (request, response) => {
 const PORT = 3001
 app.listen(PORT)
 console.log(`Server running on port ${PORT}`)
+
+// command to start backend dev server: npm run dev
