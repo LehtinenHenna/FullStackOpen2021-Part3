@@ -1,0 +1,7 @@
+POST https://shrouded-harbor-21993.herokuapp.com/api/persons
+Content-Type: application/json
+
+{
+  "name": "Godfrey Harold Hardy",
+  "number": "045-5567898"
+}
