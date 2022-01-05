@@ -60,17 +60,20 @@ app.use(morgan((tokens,req, res) => {
 }))
 /*~~~~~~~~~~~~~~~~~~*/
 
-/*
+
 // api to get the info page
 app.get('/info', (request, response) => {
-  const message = `Phonebook has info for ${persons.length} people`
-  const date = new Date()
-  response.send(
-    `<p>${message}</p>
-    <p>${date}</p>`
-  )
+  Person.find({}).then(persons => {
+    const message = `Phonebook has info for ${persons.length} people`
+    const date = new Date()
+    response.send(
+      `<p>${message}</p>
+      <p>${date}</p>`
+    )
+  })
+
 })
-*/
+
 
 
 // api to get all persons from MongoDB
