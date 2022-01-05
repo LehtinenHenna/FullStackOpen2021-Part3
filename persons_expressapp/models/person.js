@@ -1,4 +1,5 @@
 const mongoose = require('mongoose')
+const uniqueValidator = require('mongoose-unique-validator')
 
 const url = process.env.MONGODB_URI
 
@@ -13,9 +14,12 @@ mongoose.connect(url)
 
 // Schema for defining the model
 const personSchema = new mongoose.Schema({
-  name: String,
-  number: Number
+  name: {type: String, required: true, unique:true},
+  number: {type: Number, required: true}
 })
+
+// apply the uniqueValidator plugin to personSchema
+personSchema.plugin(uniqueValidator)
 
 // reformatting the data fetched from DB so that: 
 // _id is converted from object to string and is renamed as id so as to be compatible with frontend 
@@ -27,5 +31,6 @@ personSchema.set('toJSON', {
     delete returnedObject.__v
   }
 })
+
 
 module.exports = mongoose.model('Person', personSchema)
