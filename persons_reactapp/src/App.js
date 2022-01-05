@@ -94,6 +94,13 @@ const App = () => {
           setTimeout(() => {
             setMessage(null)
           }, 4000)
+        })
+        .catch(error => {
+          setSuccess(false)
+          setMessage(JSON.stringify(error.response.data))
+          setTimeout(() => {
+            setMessage(null)
+          }, 7000)
         }) 
     } 
   }
