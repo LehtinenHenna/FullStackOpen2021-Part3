@@ -1,10 +1,13 @@
+require('dotenv').config()
 const express = require('express')
 const morgan = require('morgan')
 const app = express()
 const cors = require('cors')
+const Person = require('./models/person')
 
 /*~~~~~~~~~~~~~~~~~~*/
 
+/*
 let persons = [
   {
     id: 1,
@@ -27,6 +30,7 @@ let persons = [
     number: "39-23-6423122"
   }
 ]
+*/
 /*~~~~~~~~~~~~~~~~~~*/
 
 app.use(express.json())
@@ -66,21 +70,18 @@ app.get('/info', (request, response) => {
   )
 })
 
-// api to get all persons
+// api to get all persons (using MongoDB)
 app.get('/api/persons', (request, response) => {
-  response.json(persons)
+  Person.find({}).then(persons => {
+    response.json(persons)
+  })
 })
 
-// api to get one person
+// api to get one person (using MongoDB)
 app.get('/api/persons/:id', (request, response) => {
-  const id = Number(request.params.id)
-  const person = persons.find(person => person.id === id)
-  
-  if (person) {
+  Person.findById(request.params.id).then(person => {
     response.json(person)
-  } else {
-    response.status(404).end()
-  }
+  })
 })
 
 // api to delete a person
@@ -91,6 +92,7 @@ app.delete('/api/persons/:id', (request, response) => {
   response.status(204).end()
 })
 
+/*
 // function to generate a unique id
 const generateId = () => {
   let id = null 
@@ -102,6 +104,7 @@ const generateId = () => {
 
   return id
 }
+*/
 
 // api to post a person
 app.post('/api/persons', (request, response) => {
@@ -131,7 +134,7 @@ app.post('/api/persons', (request, response) => {
 })
 
 /*~~~~~~~~~~~~~~~~~~*/
-const PORT = process.env.PORT || 3001
+const PORT = process.env.PORT
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`)
 })

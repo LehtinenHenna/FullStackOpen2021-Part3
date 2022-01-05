@@ -1,3 +1,13 @@
+/*This file allows you to post a new person to the phone book or 
+get all phone book data when this program is run with command line arguments.
+
+to get all phone book data, type command: 
+$ node mongo.js <password> 
+
+to post a new person and their number to the phone book, type command:
+$ node mongo.js <password> <name> <number>
+*/
+
 const mongoose = require('mongoose')
 
 if (process.argv.length<3) {
