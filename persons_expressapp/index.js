@@ -7,7 +7,7 @@ const Person = require('./models/person')
 
 /*~~~~~~~~~~~~~~~~~~*/
 
-
+/*
 let persons = [
   {
     id: 1,
@@ -30,7 +30,7 @@ let persons = [
     number: "39-23-6423122"
   }
 ]
-
+*/
 /*~~~~~~~~~~~~~~~~~~*/
 
 app.use(express.json())
@@ -60,7 +60,7 @@ app.use(morgan((tokens,req, res) => {
 }))
 /*~~~~~~~~~~~~~~~~~~*/
 
-
+/*
 // api to get the info page
 app.get('/info', (request, response) => {
   const message = `Phonebook has info for ${persons.length} people`
@@ -70,45 +70,40 @@ app.get('/info', (request, response) => {
     <p>${date}</p>`
   )
 })
+*/
 
 
-// api to get all persons (using MongoDB)
+// api to get all persons from MongoDB
 app.get('/api/persons', (request, response) => {
   Person.find({}).then(persons => {
     response.json(persons)
   })
 })
 
-// api to get one person (using MongoDB)
-app.get('/api/persons/:id', (request, response) => {
-  Person.findById(request.params.id).then(person => {
-    response.json(person)
-  })
+// api to get one person by id from MongoDB
+app.get('/api/persons/:id', (request, response, next) => {
+  Person.findById(request.params.id)
+    .then(person => {
+      if (person) {
+        response.json(person)
+      } else {
+        response.status(404).end()
+      }
+    })
+    .catch(error => next(error))
 })
 
-// api to delete a person
-app.delete('/api/persons/:id', (request, response) => {
-  const id = Number(request.params.id)
-  persons = persons.filter(person => person.id !== id)
-
-  response.status(204).end()
+// api to delete a person by id from MongoDB
+app.delete('/api/persons/:id', (request, response, next) => {
+  Person.findByIdAndRemove(request.params.id)
+    .then(result => {
+      response.status(204).end()
+    })
+    .catch(error => next(error))
 })
 
-/*
-// function to generate a unique id
-const generateId = () => {
-  let id = null 
-  do {
-    id = Math.floor( Math.random() * 100 )// generates random integer between 0 and 100
-    console.log('id:', id)
-  }
-  while (persons.find(person => person.id === id)) // generate new id if it's already taken
 
-  return id
-}
-*/
-
-// api to post a person
+// api to post a person to MongoDB
 app.post('/api/persons', (request, response) => {
   const body = request.body
 
@@ -133,6 +128,26 @@ app.post('/api/persons', (request, response) => {
     response.json(savedPerson)
   })
 })
+/*~~~~~~~~~~~~~~~~~~*/
+
+// middleware to handle unknown end points
+const unknownEndpoint = (request, response) => {
+  response.status(404).send({ error: 'unknown endpoint' })
+}
+app.use(unknownEndpoint)
+
+
+// middleware to handle errors
+const errorHandler = (error, request, response, next) => {
+  console.error(error.message)
+
+  if (error.name === 'CastError') {
+    return response.status(400).send({ error: 'malformatted id' })
+  }
+
+  next(error)
+}
+app.use(errorHandler)
 
 /*~~~~~~~~~~~~~~~~~~*/
 const PORT = process.env.PORT
