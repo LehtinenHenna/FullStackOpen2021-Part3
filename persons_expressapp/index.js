@@ -7,7 +7,7 @@ const Person = require('./models/person')
 
 /*~~~~~~~~~~~~~~~~~~*/
 
-/*
+
 let persons = [
   {
     id: 1,
@@ -30,7 +30,7 @@ let persons = [
     number: "39-23-6423122"
   }
 ]
-*/
+
 /*~~~~~~~~~~~~~~~~~~*/
 
 app.use(express.json())
@@ -60,6 +60,7 @@ app.use(morgan((tokens,req, res) => {
 }))
 /*~~~~~~~~~~~~~~~~~~*/
 
+
 // api to get the info page
 app.get('/info', (request, response) => {
   const message = `Phonebook has info for ${persons.length} people`
@@ -69,6 +70,7 @@ app.get('/info', (request, response) => {
     <p>${date}</p>`
   )
 })
+
 
 // api to get all persons (using MongoDB)
 app.get('/api/persons', (request, response) => {
@@ -110,27 +112,26 @@ const generateId = () => {
 app.post('/api/persons', (request, response) => {
   const body = request.body
 
-  const newPerson = {
-    id: generateId(),
+  const newPerson = new Person({
     name: body.name,
-    number: body.number,
-  }
+    number: body.number
+  })
 
   // require both name and number
   if (!body.name || !body.number) {
     return response.status(400).json({
       error: 'content missing'
     })
-  // if name is already in the phone book request is denied
-  } else if (persons.find(person => person.name === newPerson.name)) {
+  }/* // if name is already in the phone book request is denied
+  else if (persons.find(person => person.name === newPerson.name)) {
     return response.status(400).json({
       error: 'name already exists'
     })
   }
-
-  persons = persons.concat(newPerson)
-
-  response.json(newPerson)
+  */
+  newPerson.save().then(savedPerson => {
+    response.json(savedPerson)
+  })
 })
 
 /*~~~~~~~~~~~~~~~~~~*/
