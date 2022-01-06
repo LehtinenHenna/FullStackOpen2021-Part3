@@ -2,6 +2,6 @@
 
 https://shrouded-harbor-21993.herokuapp.com
 
-### Link to json data for the phone book
+### A link to json data for the phone book
 
 https://shrouded-harbor-21993.herokuapp.com/api/persons

@@ -1,8 +1,8 @@
-/*This file allows you to post a new person to the phone book or 
+/*This file allows you to post a new person to the phone book or
 get all phone book data when this program is run with command line arguments.
 
-to get all phone book data, type command: 
-$ node mongo.js <password> 
+to get all phone book data, type command:
+$ node mongo.js <password>
 
 to post a new person and their number to the phone book, type command:
 $ node mongo.js <password> <name> <number>
@@ -18,7 +18,7 @@ if (process.argv.length<3) {
 const password = process.argv[2]
 const url =
   `mongodb+srv://phonebook_admin:${password}@cluster0.hz6iz.mongodb.net/person-app?retryWrites=true&w=majority`
-  
+
 mongoose.connect(url)
 
 // create the schema
@@ -43,14 +43,14 @@ if (process.argv.length === 5) {
   person.save().then(result => {
     console.log(`added ${newName} number ${newNumber} to phonebook`)
     mongoose.connection.close()
-  }) 
+  })
 }
 
 // if only password was given as command line argument
 // e.g. node mongo.js <password>
 else if (process.argv.length === 3) {
   Person.find({}).then(result => {
-    console.log("phonebook:")
+    console.log('phonebook:')
     result.forEach(person => {
       console.log(person.name, person.number)
     })
@@ -59,5 +59,5 @@ else if (process.argv.length === 3) {
 }
 else {
   console.log('wrong number of arguments.')
-  mongoose.connection.close()  
+  mongoose.connection.close()
 }

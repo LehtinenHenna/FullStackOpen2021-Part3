@@ -1,4 +1,4 @@
-require('dotenv').config()
+require('dotenv').config() // dotenv allows you to have environment variables loaded from .env file into process.env. The .env file can be gitignored so the variables don't end up in github
 const express = require('express')
 const morgan = require('morgan')
 const app = express()
@@ -7,35 +7,9 @@ const Person = require('./models/person')
 
 /*~~~~~~~~~~~~~~~~~~*/
 
-/*
-let persons = [
-  {
-    id: 1,
-    name: "Arto Hellas",
-    number: "040-123456"
-  },
-  {
-    id: 2,
-    name: "Ada Lovelace",
-    number: "39-44-5323523"
-  },
-  {
-    id: 3,
-    name: "Dan Abramov",
-    number: "12-43-234345"
-  },
-  {
-    id: 4,
-    name: "Mary Poppendick",
-    number: "39-23-6423122"
-  }
-]
-*/
-/*~~~~~~~~~~~~~~~~~~*/
-
 app.use(express.json())
 app.use(cors()) // middleware to allow reactapp to fetch data from backend
-app.use(express.static('build')) // middleware so that index.html from build is displayed at 
+app.use(express.static('build')) // middleware so that index.html from build is displayed at
 
 // morgan middleware logs request data in the console
 app.use(morgan((tokens,req, res) => {
@@ -45,11 +19,11 @@ app.use(morgan((tokens,req, res) => {
     tokens.status(req, res),
     tokens.res(req, res, 'content-length'), '-',
     tokens['response-time'](req, res), 'ms',
-    ]
-  
+  ]
+
   let body = req.body
   body = JSON.stringify(body)
-  
+
   if (body !== '{}') {
     // creating a new token that can be called with tokens.body(req, res)
     morgan.token('body', () => body)
@@ -75,13 +49,13 @@ app.get('/info', (request, response) => {
 })
 
 
-
 // api to get all persons from MongoDB
 app.get('/api/persons', (request, response) => {
   Person.find({}).then(persons => {
     response.json(persons)
   })
 })
+
 
 // api to get one person by id from MongoDB
 app.get('/api/persons/:id', (request, response, next) => {
@@ -96,6 +70,7 @@ app.get('/api/persons/:id', (request, response, next) => {
     .catch(error => next(error))
 })
 
+
 // api to delete a person by id from MongoDB
 app.delete('/api/persons/:id', (request, response, next) => {
   Person.findByIdAndRemove(request.params.id)
@@ -106,7 +81,7 @@ app.delete('/api/persons/:id', (request, response, next) => {
 })
 
 
-// api to post a person to MongoDB
+// api to post a person to MongoDB, validation is done in personSchema in models/person.js
 app.post('/api/persons', (request, response, next) => {
   const body = request.body
 
@@ -114,21 +89,16 @@ app.post('/api/persons', (request, response, next) => {
     name: body.name,
     number: body.number
   })
-  /*
-  // require both name and number
-  if (!body.name || !body.number) {
-    return response.status(400).json({
-      error: 'content missing'
-    })
-  }
-  */
 
-  newPerson.save().then(savedPerson => {
-    response.json(savedPerson.toJSON())
-  })
-  .catch(error => next(error))
+  newPerson.save()
+    .then(savedPerson => {
+      response.json(savedPerson.toJSON())
+    })
+    .catch(error => next(error))
 })
 
+
+// api to modify a person's information to MongoDB. Validation is not being done at this point.
 app.put('/api/persons/:id', (request, response, next) => {
   const body = request.body
 
@@ -136,8 +106,7 @@ app.put('/api/persons/:id', (request, response, next) => {
     name: body.name,
     number: body.number
   }
-
-  Person.findByIdAndUpdate(request.params.id, person, {new: true})
+  Person.findByIdAndUpdate(request.params.id, person, { new: true })
     .then(updatedPerson => {
       response.json(updatedPerson)
     })
@@ -145,7 +114,7 @@ app.put('/api/persons/:id', (request, response, next) => {
 })
 /*~~~~~~~~~~~~~~~~~~*/
 
-// middleware to handle unknown end points
+// middleware to handle unknown endpoints
 const unknownEndpoint = (request, response) => {
   response.status(404).send({ error: 'unknown endpoint' })
 }
